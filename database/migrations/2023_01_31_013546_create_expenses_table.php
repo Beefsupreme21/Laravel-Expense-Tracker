@@ -13,7 +13,8 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->date('date');
             $table->string('description');
-            $table->integer('amount');
+            $table->float('amount');
+            $table->boolean('type');
             $table->timestamps();
         });
     }

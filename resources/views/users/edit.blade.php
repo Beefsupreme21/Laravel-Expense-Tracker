@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-layout>
     <div>
         <h1 class="text-2xl mt-10 mb-8 font-medium leading-6 text-gray-900">Update User</h1>
         <x-validation-errors />   
@@ -33,4 +33,4 @@
             </div>
         </form>    
     </div>
-</x-app-layout>
+</x-layout>

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Expense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -14,6 +16,26 @@ class UserController extends Controller
 
         return view('users.index', [
             'users' => $users,
+        ]);
+    }
+
+    public function show(User $user)
+    {
+        $expenses = Expense::where('user_id', $user->id)
+            ->orderBy('date', 'desc')
+            ->get()
+            ->groupBy(function ($expense) {
+                return Carbon::parse($expense->date)->format('F Y');
+        });
+
+        $positiveExpenses = $user->expenses->where('type', 1)->sum('amount');
+        $negativeExpenses = $user->expenses->where('type', 0)->sum('amount');
+
+        return view('users.show', [
+            'expenses' => $expenses,
+            'user' => $user,
+            'positiveExpenses' => $positiveExpenses,
+            'negativeExpenses' => $negativeExpenses,
         ]);
     }
 
