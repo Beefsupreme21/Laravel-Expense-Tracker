@@ -12,7 +12,9 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        $users = User::when(request('searchQuery'), function ($query) {
+            return $query->where('name', 'like', '%' . request('searchQuery') . '%');
+        })->with('expenses')->get();
 
         return view('users.index', [
             'users' => $users,
@@ -21,15 +23,42 @@ class UserController extends Controller
 
     public function show(User $user)
     {
+        $expenses = Expense::where('user_id', $user->id);
+    
+        if (request()->has('searchQuery')) {
+            $expenses->where('description', 'like', '%'. request('searchQuery') . '%');
+        }
+    
+        $expenses = $expenses->orderBy('date', 'desc')->get();
+    
+        $expenses = $expenses->groupBy(function ($expense) {
+            return Carbon::parse($expense->date)->format('F Y');
+        });
+        
+        $positiveExpenses = $user->expenses->where('type', 'income')->sum('amount');
+        $negativeExpenses = $user->expenses->where('type', 'expense')->sum('amount');
+    
+        return view('users.show', [
+            'expenses' => $expenses,
+            'user' => $user,
+            'positiveExpenses' => $positiveExpenses,
+            'negativeExpenses' => $negativeExpenses,
+        ]);
+    }
+
+    public function searchLast30Days(User $user)
+    {
         $expenses = Expense::where('user_id', $user->id)
-            ->orderBy('date', 'desc')
-            ->get()
-            ->groupBy(function ($expense) {
-                return Carbon::parse($expense->date)->format('F Y');
+            ->where('date', '>=', Carbon::now()->subDays(30))
+            ->where('description', 'like', '%' . request('searchQuery') . '%')
+            ->orderBy('date', 'desc')->get();
+
+        $expenses = $expenses->groupBy(function ($expense) {
+            return Carbon::parse($expense->date)->format('F Y');
         });
 
-        $positiveExpenses = $user->expenses->where('type', 1)->sum('amount');
-        $negativeExpenses = $user->expenses->where('type', 0)->sum('amount');
+        $positiveExpenses = $user->expenses->where('type', 'income')->sum('amount');
+        $negativeExpenses = $user->expenses->where('type', 'expense')->sum('amount');
 
         return view('users.show', [
             'expenses' => $expenses,

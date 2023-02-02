@@ -12,9 +12,19 @@ class ExpenseFactory extends Factory
         return [
             'user_id' => 1,
             'amount' => fake()->randomFloat(2, 0.01, 10000.00),
-            'date' => fake()->dateTimeBetween('-2 years', 'now'),
+            'date' => fake()->dateTimeBetween('-1 years', 'now'),
             'description' => fake()->company(),
-            'type' => fake()->numberBetween(0, 1),
+            'category' => fake()->randomElement([
+                'Rent', 
+                'Utilities', 
+                'Food', 
+                'Entertainment',
+                'Misc', 
+            ]),
+            'type' => fake()->randomElement([
+                'income', 
+                'expense', 
+            ]),
         ];
     }
 }

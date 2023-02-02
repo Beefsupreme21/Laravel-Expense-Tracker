@@ -1,4 +1,11 @@
 <x-layout>     
+    <form action="/user-search" method="POST">
+        @csrf
+        <div>
+            <input type="text" name="searchQuery" value="{{ request('searchQuery') ?? null }}" placeholder="Search" required>
+            <button type="submit">Search</button>
+        </div>
+    </form>
     <table class="table-auto w-full text-black bg-white">
         <thead>
             <tr class="text-left font-medium">
