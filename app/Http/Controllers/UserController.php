@@ -46,20 +46,21 @@ class UserController extends Controller
         ]);
     }
 
-    public function searchLast30Days(User $user)
+    public function searchExpenses(User $user)
     {
+        $days = request('days');
         $expenses = Expense::where('user_id', $user->id)
-            ->where('date', '>=', Carbon::now()->subDays(30))
+            ->where('date', '>=', Carbon::now()->subDays($days))
             ->where('description', 'like', '%' . request('searchQuery') . '%')
             ->orderBy('date', 'desc')->get();
-
+    
         $expenses = $expenses->groupBy(function ($expense) {
             return Carbon::parse($expense->date)->format('F Y');
         });
-
+    
         $positiveExpenses = $user->expenses->where('type', 'income')->sum('amount');
         $negativeExpenses = $user->expenses->where('type', 'expense')->sum('amount');
-
+    
         return view('users.show', [
             'expenses' => $expenses,
             'user' => $user,

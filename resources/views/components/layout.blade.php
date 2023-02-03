@@ -14,6 +14,7 @@
     <body>
         <header class="w-full bg-gray-800">
             <a href="/users">Users</a>
+            <a href="/expenses">Expenses</a>
         </header>
         <main class="max-w-screen-lg min-h-screen sm:px-16 md:px-24">
             {{ $slot }}
