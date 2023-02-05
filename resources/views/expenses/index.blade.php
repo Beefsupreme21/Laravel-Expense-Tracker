@@ -5,43 +5,29 @@
         <x-validation-errors />   
         <form action="/expenses" method="POST" >
             @csrf
-            <div class="bg-white py-2 px-4 sm:px-6 lg:px-8 rounded-xl text-gray-600 border border-gray-200">
-                <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-5">
-                    <x-label for="user_id">User ID</x-label>
-                    <div class="mt-2 mb-4 sm:col-span-2 sm:my-0">
-                        <x-input type="text" name="user_id" id="user_id" :value="old('user_id')" />
-                    </div>
-                </div>
-                <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:py-5">
-                    <x-label for="date">Date</x-label>
-                    <div class="mt-2 mb-4 sm:col-span-2 sm:my-0">
-                        <x-input type="date" name="date" id="date" :value="old('date')" />
-                    </div>
-                </div>
-                <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:py-5">
-                    <x-label for="description">Description</x-label>
-                    <div class="mt-2 mb-4 sm:col-span-2 sm:my-0">
-                        <x-input type="text" name="description" id="description" :value="old('description')" />
-                    </div>
-                </div>
-                <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:py-5">
-                    <x-label for="category">Category</x-label>
-                    <div class="mt-2 mb-4 sm:col-span-2 sm:my-0">
-                        <x-input type="text" name="category" id="category" :value="old('category')" />
-                    </div>
-                </div>
-                <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:py-5">
-                    <x-label for="amount">Amount</x-label>
-                    <div class="mt-2 mb-4 sm:col-span-2 sm:my-0">
-                        <x-input type="text" name="amount" id="amount" :value="old('amount')" />
-                    </div>
-                </div>
-                <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:py-5">
-                    <x-label for="type">Type</x-label>
-                    <div class="mt-2 mb-4 sm:col-span-2 sm:my-0">
-                        <x-input type="text" name="type" id="type" :value="old('type')" />
-                    </div>
-                </div>
+            <div>
+                <x-label for="user_id">User ID</x-label>
+                <x-input type="text" name="user_id" id="user_id" :value="old('user_id')" />
+            </div>
+            <div>
+                <x-label for="date">Date</x-label>
+                <x-input type="date" name="date" id="date" :value="old('date')" />
+            </div>
+            <div>
+                <x-label for="description">Description</x-label>
+                <x-input type="text" name="description" id="description" :value="old('description')" />
+            </div>
+            <div>
+                <x-label for="category">Category</x-label>
+                <x-input type="text" name="category" id="category" :value="old('category')" />
+            </div>
+            <div>
+                <x-label for="amount">Amount</x-label>
+                <x-input type="text" name="amount" id="amount" :value="old('amount')" />
+            </div>
+            <div>
+                <x-label for="type">Type</x-label>
+                <x-input type="text" name="type" id="type" :value="old('type')" />
             </div>
             <div class="pt-5">
                 <div class="flex justify-end">

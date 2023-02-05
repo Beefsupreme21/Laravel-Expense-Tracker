@@ -22,3 +22,10 @@ Route::post('/user-search', function() {
 });
 
 Route::post('/users/{user}/search-expenses', [UserController::class, 'searchExpenses']);
+
+
+Route::get('/login/demo', [UserController::class, 'demo']);
+Route::get('/register', [UserController::class, 'register']);
+Route::post('/users/authenticate', [UserController::class, 'authenticate']);
+Route::get('/login', [UserController::class, 'login']);
+Route::post('/logout', [UserController::class, 'logout']);

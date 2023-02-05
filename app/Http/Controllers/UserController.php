@@ -82,9 +82,13 @@ class UserController extends Controller
             'password' => 'required', 
         ]);
 
-        User::create($validated);
+        $validated['password'] = bcrypt($validated['password']);
 
-        return redirect()->route('users.index');
+        $user = User::create($validated);
+
+        auth()->login($user);
+
+        return redirect()->route('users.show', ['user' => $user->id]);
     }
 
     public function edit(User $user)
@@ -112,5 +116,48 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()->route('users.index');
+    }
+
+    public function register()
+    {
+        return view('users.register');
+    }
+
+    public function login() {
+        return view('users.login');
+    }
+
+    public function authenticate(Request $request) {
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => 'required'
+        ]);
+
+        if(auth()->attempt($validated)) {
+            $request->session()->regenerate();
+
+            return redirect('/')->with('message', 'You are now logged in');
+        }
+
+        return back()->withErrors(['email' => 'Invalid Credentials'])->onlyInput('email');
+    }
+
+    public function logout(Request $request)
+    {
+        auth()->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return view('home');
+    }
+
+    public function demo()
+    {
+        $demoUser = User::where('email', 'demo@example.com')->first();
+
+        auth()->login($demoUser);
+
+        return redirect()->route('users.show', ['user' => $demoUser->id]);
     }
 }
