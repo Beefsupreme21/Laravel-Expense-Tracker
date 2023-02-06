@@ -13,13 +13,27 @@
     
     
     <div class="text-lg mt-2">
-        <p>Total Earned: <span class="text-green-500 font-medium">${{ number_format($positiveExpenses, 2) }}</span></p>
-        <p>Total Spent: <span class="text-red-500 font-medium">-${{ number_format($negativeExpenses, 2) }}</span></p>
-        @if ($positiveExpenses - $negativeExpenses > 0)
-            <p>Current Balance: <span class="font-medium">${{ number_format($positiveExpenses - $negativeExpenses, 2) }}</span></p>
+        <p>Total Earned: <span class="text-green-500 font-medium">${{ number_format($totalIncome, 2) }}</span></p>
+        <p>Total Spent: <span class="text-red-500 font-medium">-${{ number_format($totalExpenses, 2) }}</span></p>
+        @if ($totalIncome - $totalExpenses > 0)
+            <p>Current Balance: <span class="font-medium">${{ number_format($totalIncome - $totalExpenses, 2) }}</span></p>
         @else
-            <p>Current Balance: <span class="text-red-500 font-medium">${{ number_format($positiveExpenses - $negativeExpenses, 2) }}</span></p>
+            <p>Current Balance: <span class="text-red-500 font-medium">${{ number_format($totalIncome - $totalExpenses, 2) }}</span></p>
         @endif
+    </div>
+
+    <div>
+        <span>{{ $currentMonth }}</span>
+        <span>{{ $currentMonthExpenseTotal }}</span>
+        <span>{{ $currentMonthIncomeTotal }}</span>
+        <canvas id="pie-chart-current-month"></canvas>
+    </div>
+
+    <div>
+        <span>{{ $currentMonth }}</span>
+        <span>${{ number_format($currentMonthExpenseTotal, 2) }}</span>
+        <span>${{ number_format($currentMonthIncomeTotal, 2) }}</span>
+        <canvas id="pie-chart-previous-month"></canvas>
     </div>
 
     <div x-data="{ open: false }">
@@ -82,4 +96,21 @@
             @endforeach
         </tbody>
     </table>
+
+    <script>
+        let currentMonth = document.getElementById('pie-chart-current-month').getContext('2d');
+
+        let pieChart = new Chart(currentMonth, {
+            type: 'pie',
+            data: {
+                labels: ['Income', 'Expense'], 
+                datasets: [{
+                    data: [{{ $currentMonthExpenseTotal }}, {{ $currentMonthIncomeTotal }}],
+                    backgroundColor: ['#00FF00', '#FF0000']
+                }]
+            },
+            options: {}
+        });
+
+    </script>
 </x-layout>

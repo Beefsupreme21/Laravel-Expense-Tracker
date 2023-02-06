@@ -23,28 +23,46 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        $expenses = Expense::where('user_id', $user->id);
-    
-        if (request()->has('searchQuery')) {
-            $expenses->where('description', 'like', '%'. request('searchQuery') . '%');
-        }
-    
-        $expenses = $expenses->orderBy('date', 'desc')->get();
-    
-        $expenses = $expenses->groupBy(function ($expense) {
-            return Carbon::parse($expense->date)->format('F Y');
-        });
-        
-        $positiveExpenses = $user->expenses->where('type', 'income')->sum('amount');
-        $negativeExpenses = $user->expenses->where('type', 'expense')->sum('amount');
-    
+        $currentMonth = Carbon::now()->format('F Y');
+        $currentYear = Carbon::now()->format('Y');
+
+        $expenses = Expense::where('user_id', $user->id)
+            ->when(request()->has('searchQuery'), function ($query) {
+                return $query->where('description', 'like', '%' . request('searchQuery') . '%');
+            })
+            ->orderBy('date', 'desc')
+            ->get()
+            ->groupBy(function ($expense) {
+                return Carbon::parse($expense->date)->format('F Y');
+            });
+
+        $totalIncome = $user->expenses->where('type', 'income')->sum('amount');
+        $totalExpenses = $user->expenses->where('type', 'expense')->sum('amount');
+
+        $currentMonthExpenseTotal = Expense::where('user_id', $user->id)
+            ->where('type', 'expense')
+            ->whereYear('date', $currentYear)
+            ->whereMonth('date', Carbon::now()->format('m'))
+            ->sum('amount');
+
+        $currentMonthIncomeTotal = Expense::where('user_id', $user->id)
+            ->where('type', 'income')
+            ->whereYear('date', $currentYear)
+            ->whereMonth('date', Carbon::now()->format('m'))
+            ->sum('amount');
+
         return view('users.show', [
             'expenses' => $expenses,
             'user' => $user,
-            'positiveExpenses' => $positiveExpenses,
-            'negativeExpenses' => $negativeExpenses,
+            'totalIncome' => $totalIncome,
+            'totalExpenses' => $totalExpenses,
+            'currentMonthExpenseTotal' => $currentMonthExpenseTotal,
+            'currentMonthIncomeTotal' => $currentMonthIncomeTotal,
+            'currentMonth' => $currentMonth,
         ]);
     }
+
+
 
     public function searchExpenses(User $user)
     {

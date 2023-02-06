@@ -8,6 +8,7 @@
         <link rel = "icon" href="{{ asset('images/alpinejs.svg') }}" type = "image/x-icon">
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="//unpkg.com/alpinejs" defer></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
         <link rel="stylesheet" href="{{ asset('style.css') }}">
     </head>
 
