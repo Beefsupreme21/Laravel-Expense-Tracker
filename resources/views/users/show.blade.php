@@ -22,19 +22,34 @@
         @endif
     </div>
 
-    <div>
-        <span>{{ $currentMonth }}</span>
-        <span>{{ $currentMonthExpenseTotal }}</span>
-        <span>{{ $currentMonthIncomeTotal }}</span>
-        <canvas id="pie-chart-current-month"></canvas>
+    <div class="flex">
+        <div class="w-1/2 mr-6">
+            <span class="font-bold text-lg">{{ $currentMonth }}</span>
+            <div class="text-sm">
+                <div class="text-red-500 font-bold">Expenses: ${{ number_format($currentMonthExpenseTotal, 2) }}</div>
+                <div class="text-green-500 font-bold">Income: ${{ number_format($currentMonthIncomeTotal, 2) }}</div>
+            </div>
+            <canvas id="pie-chart-current-month" class="w-32 h-32"></canvas>
+        </div>
+        <div class="w-1/2 ml-6">
+            <span class="font-bold text-lg">{{ $previousMonth }}</span>
+            <div class="text-sm">
+                <div class="text-red-500 font-bold">Expenses: ${{ number_format($previousMonthExpenseTotal, 2) }}</div>
+                <div class="text-green-500 font-bold">Income: ${{ number_format($previousMonthIncomeTotal, 2) }}</div>
+            </div>
+            <canvas id="pie-chart-previous-month" class="w-32 h-32"></canvas>
+        </div>
+    </div>
+    
+    <div class="flex">
+        <div class="w-1/2 mr-6">
+            <span class="font-bold text-lg">{{ $currentMonth }}</span>
+            <span class="text-sm">Expenses: ${{ number_format($currentMonthExpenseTotal, 2) }}</span>
+            <span class="text-sm">Income: ${{ number_format($currentMonthIncomeTotal, 2) }}</span>
+            <canvas id="pie-chart-category" class="w-32 h-32"></canvas>
+        </div>
     </div>
 
-    <div>
-        <span>{{ $currentMonth }}</span>
-        <span>${{ number_format($currentMonthExpenseTotal, 2) }}</span>
-        <span>${{ number_format($currentMonthIncomeTotal, 2) }}</span>
-        <canvas id="pie-chart-previous-month"></canvas>
-    </div>
 
     <div x-data="{ open: false }">
         <button x-on:click="open = !open">Add new expense</button>
@@ -99,8 +114,10 @@
 
     <script>
         let currentMonth = document.getElementById('pie-chart-current-month').getContext('2d');
+        let previousMonth = document.getElementById('pie-chart-previous-month').getContext('2d');
+        let categoryChart = document.getElementById('pie-chart-category').getContext('2d');
 
-        let pieChart = new Chart(currentMonth, {
+        let pieChartCurrentMonth  = new Chart(currentMonth, {
             type: 'pie',
             data: {
                 labels: ['Income', 'Expense'], 
@@ -111,6 +128,31 @@
             },
             options: {}
         });
+
+        let pieChartPreviousMonth  = new Chart(previousMonth, {
+            type: 'pie',
+            data: {
+                labels: ['Income', 'Expense'], 
+                datasets: [{
+                    data: [{{ $previousMonthExpenseTotal }}, {{ $previousMonthIncomeTotal }}],
+                    backgroundColor: ['#00FF00', '#FF0000']
+                }]
+            },
+            options: {}
+        });
+
+        let pieChartCategory  = new Chart(categoryChart, {
+            type: 'pie',
+            data: {
+                labels: ['Food', 'Rent', 'Entertainment', 'Utilities'], 
+                datasets: [{
+                    data: [{{ $foodExpenses }}, {{ $rentExpenses }}, {{ $entertainmentExpenses }}, {{ $utilitiesExpenses }}],
+                    backgroundColor: ['#F44336', '#9C27B0', '#3F51B5', '#4CAF50']
+                }]
+            },
+            options: {}
+        });
+
 
     </script>
 </x-layout>

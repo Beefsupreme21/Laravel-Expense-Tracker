@@ -25,6 +25,8 @@ class UserController extends Controller
     {
         $currentMonth = Carbon::now()->format('F Y');
         $currentYear = Carbon::now()->format('Y');
+        $previousMonth = Carbon::now()->subMonth()->format('F Y');
+        $previousMonthYear = Carbon::now()->subMonth()->format('Y');
 
         $expenses = Expense::where('user_id', $user->id)
             ->when(request()->has('searchQuery'), function ($query) {
@@ -39,6 +41,34 @@ class UserController extends Controller
         $totalIncome = $user->expenses->where('type', 'income')->sum('amount');
         $totalExpenses = $user->expenses->where('type', 'expense')->sum('amount');
 
+        $foodExpenses = Expense::where('user_id', $user->id)
+            ->where('type', 'expense')
+            ->where('category', 'food')
+            ->whereYear('date', $currentYear)
+            ->whereMonth('date', Carbon::now()->format('m'))
+            ->sum('amount');
+            
+        $rentExpenses = Expense::where('user_id', $user->id)
+            ->where('type', 'expense')
+            ->where('category', 'rent')
+            ->whereYear('date', $currentYear)
+            ->whereMonth('date', Carbon::now()->format('m'))
+            ->sum('amount');
+
+        $entertainmentExpenses = Expense::where('user_id', $user->id)
+            ->where('type', 'expense')
+            ->where('category', 'entertainment')
+            ->whereYear('date', $currentYear)
+            ->whereMonth('date', Carbon::now()->format('m'))
+            ->sum('amount');
+            
+        $utilitiesExpenses = Expense::where('user_id', $user->id)
+            ->where('type', 'expense')
+            ->where('category', 'utilities')
+            ->whereYear('date', $currentYear)
+            ->whereMonth('date', Carbon::now()->format('m'))
+            ->sum('amount');
+
         $currentMonthExpenseTotal = Expense::where('user_id', $user->id)
             ->where('type', 'expense')
             ->whereYear('date', $currentYear)
@@ -51,6 +81,18 @@ class UserController extends Controller
             ->whereMonth('date', Carbon::now()->format('m'))
             ->sum('amount');
 
+        $previousMonthExpenseTotal = Expense::where('user_id', $user->id)
+            ->where('type', 'expense')
+            ->whereYear('date', $previousMonthYear)
+            ->whereMonth('date', Carbon::now()->subMonth()->format('m'))
+            ->sum('amount');
+
+        $previousMonthIncomeTotal = Expense::where('user_id', $user->id)
+            ->where('type', 'income')
+            ->whereYear('date', $previousMonthYear)
+            ->whereMonth('date', Carbon::now()->subMonth()->format('m'))
+            ->sum('amount');
+
         return view('users.show', [
             'expenses' => $expenses,
             'user' => $user,
@@ -58,7 +100,14 @@ class UserController extends Controller
             'totalExpenses' => $totalExpenses,
             'currentMonthExpenseTotal' => $currentMonthExpenseTotal,
             'currentMonthIncomeTotal' => $currentMonthIncomeTotal,
+            'previousMonthExpenseTotal' => $previousMonthExpenseTotal,
+            'previousMonthIncomeTotal' => $previousMonthIncomeTotal,
             'currentMonth' => $currentMonth,
+            'previousMonth' => $previousMonth,
+            'foodExpenses' => $foodExpenses,
+            'rentExpenses' => $rentExpenses,
+            'entertainmentExpenses' => $entertainmentExpenses,
+            'utilitiesExpenses' => $utilitiesExpenses,
         ]);
     }
 
